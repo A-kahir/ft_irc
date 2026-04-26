@@ -111,6 +111,7 @@ int client::get_prvcount(){
     return this->prv_count;
 }
 
-void client::incr_prv(){
+void client::incr_prv()
+{
     this->prv_count++;
 }

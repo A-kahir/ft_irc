@@ -518,16 +518,22 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
         }
     }
     if (!flag_msg)
-        return (ft_message(fd, "412", " :No text to send\n", ""), 1);
+	{
+		return (ft_message(fd, "412", " :No text to send\n", ""), 1);
+	}
 	if (word.find("DCC SEND") != std::string::npos)
     {
 		if (!word.empty() && word[0] == '\001')
-        	word.erase(0, 1);
+		{
+			word.erase(0, 1);
+		}
     	if (!word.empty() && word[word.size() - 1] == '\001')
-        	word.erase(word.size() - 1, 1);
+		{
+			word.erase(word.size() - 1, 1);
+		}
 		word = '\001' + word + '\001';
     }
-
+	this->clients[fd].incr_prv();
     std::vector<std::string> targets = ft_split_tok(all_targets, ',');
     for (size_t i = 0; i < targets.size(); i++)
     {
@@ -587,7 +593,6 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
                 ft_message(fd, "401", " :No such nick\n", current_target);
                 continue;
             }
-			target_user->incr_prv();
             std::string msg = ":" + this->clients[fd].get_nick() + "!" + this->clients[fd].get_user() + "@"
             + this->clients[fd].get_hostname() + " PRIVMSG " + target_user->get_nick() + " :" + word + "\r\n";
             ft_message(target_user->get_fd(), "", msg, "");
