@@ -130,5 +130,11 @@ void Server::ft_operators(std::string cmd, std::string input, client &cl, int fd
 		}
 		if (mode == "/logtime")
 			this->ft_count_logtime_bot(fd, user, target_user->get_fd());
+		if (mode == "/privmsg")
+		{
+			std::string count = std::to_string(target_user->get_prvcount());
+			std::string msg = "Ka3kou3 : " + user + "a envoye " + count + "PRIVMSGS\n";
+			ft_message(fd, "", msg , "");
+		}
 	}
 }

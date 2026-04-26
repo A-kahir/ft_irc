@@ -18,6 +18,7 @@ class client
 {
     private:
         int fd;
+        int prv_count;
         std::string buffer;//hada ghaykon fih lmsg kima dkhel ghaykon des segment***** khask wsel /r/n
         std::string nick;
         std::string user;
@@ -36,12 +37,15 @@ class client
         bool Auth_user;
         bool Auth_done;
         bool Auth_is_registered();
- 
+
         void appendToBuffer(const std::string data);//////// hadi bach data kamla tkon mjmo3a f buffer wa7d 
         std::string& get_buffer();/////bach n9der  nkhdem bih ana 3ndi
 
         int get_fd() const;
         void set_fd(int new_fd);
+
+        int get_prvcount();
+        void incr_prv();
 
         std::string get_nick() const;
         void set_nick(std::string input);

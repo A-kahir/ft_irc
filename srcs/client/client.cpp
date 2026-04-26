@@ -6,6 +6,7 @@ client::client()
     Auth_nick = 0;
     Auth_user = 0;
     Auth_done = 0;
+    prv_count = 0;
     fd = -1;
     connect_t = std::time(NULL);
     flag_invitation = 0;
@@ -104,4 +105,12 @@ int client::get_flag_invitation() const
 void client::set_flag_invitation(int flag)
 {
     flag_invitation = flag;
+}
+
+int client::get_prvcount(){
+    return this->prv_count;
+}
+
+void client::incr_prv(){
+    this->prv_count++;
 }
