@@ -1,0 +1,201 @@
+#include "../../includes/Server.hpp"
+#include "../../includes/Channels.hpp"
+ 
+Server::Server(int port, std::string password) : port(port), password(password)
+{
+	isStopped = false;
+	socket_fd = -1;
+	have_boot = 0;
+}
+
+int Server::get_fd(){
+	return this->socket_fd;
+}
+
+void Server::NewClient(){
+	struct sockaddr_in client_addr;
+	std::memset(&client_addr, 0, sizeof(client_addr));
+	socklen_t client_len = sizeof(client_addr);
+	int client_fd = accept(this->socket_fd, (struct sockaddr *)&client_addr, &client_len);
+	if (client_fd == -1)
+	{
+		std::cerr << "ERROOoor client\n";
+		return ;
+	}
+	if (fcntl(client_fd, F_SETFL, O_NONBLOCK) == -1)
+		std::cerr << "ERRRRROR" << std::endl;
+	struct pollfd cl;
+	cl.fd = client_fd;
+	cl.events = POLLIN;
+	cl.revents = 0;
+	this->fds.push_back(cl);
+	client newClient;
+	this->clients[client_fd] = newClient;
+}
+
+void Server::RemoveClient(int fd)
+{
+    client *cl = &this->clients[fd];
+	if (have_boot)
+    	this->have_boot = 0;
+    for (std::vector<channels>::iterator it = this->chans.begin(); it != this->chans.end();)
+    {
+        channels &chan = *it;
+        for (std::vector<client*>::iterator usr = chan.users.begin(); usr != chan.users.end();)
+        {
+            if (*usr == cl)
+                usr = chan.users.erase(usr);
+            else
+                ++usr;
+        }
+        for (std::vector<client*>::iterator opr = chan.operators.begin(); opr != chan.operators.end();)
+        {
+            if (*opr == cl)
+                opr = chan.operators.erase(opr);
+            else
+                ++opr;
+        }
+        if (chan.users.empty())
+        {
+            it = this->chans.erase(it);
+            continue;
+        }
+        if (chan.operators.empty() && !chan.users.empty())
+        {
+            chan.operators.push_back(chan.users.front());
+        }
+        ++it;
+    }
+    close(fd);
+    this->clients.erase(fd);
+    for (std::vector<pollfd>::iterator it = this->fds.begin();
+         it != this->fds.end(); ++it)
+    {
+        if (it->fd == fd)
+        {
+            this->fds.erase(it);
+            break;
+        }
+    }
+    std::cout << "Client " << fd << " is disconnected" << std::endl;
+}
+
+std::string Server::get_password() const
+{
+	return (password);
+}
+
+void Server::process_commands(int fd)
+{
+	std::string& buffer = this->clients[fd].get_buffer();
+	size_t pos;
+	while((pos = buffer.find('\n')) != std::string::npos)
+	{
+		std::string command = buffer.substr(0, pos);
+		if (!command.empty() && command[command.size() - 1] == '\r')
+			command.erase(command.size() - 1);
+		buffer.erase(0,  pos + 1);
+
+		std::istringstream save(command);
+		std::string cmd;
+		if (!(save >> cmd))
+			continue;
+		std::string input;
+		std::getline(save, input);
+		if (!input.empty() && input[0] == ' ')
+			input.erase(0, 1);
+		for (size_t i = 0; i < cmd.size(); i++)
+			cmd[i] = toupper(cmd[i]);
+		this->clients[fd].set_fd(fd);
+		if (ft_is_not_cmd(cmd) == 1)
+		{
+			ft_message(fd, "421", " :Unknown command\n", cmd);
+			continue;
+		}
+		else
+		{
+			ft_first_cmds(cmd, input, this->clients[fd], fd);
+			if (this->clients[fd].Auth_is_registered() == 1)
+			{
+				this->clients[fd].Auth_done = 1;
+				ft_operators(cmd, input, this->clients[fd], fd);
+			}
+		}
+	}
+}
+
+void Server::handle_message(int fd)
+{
+	char buffer[1024];
+	std::memset(buffer, 0, sizeof(buffer));
+	ssize_t bytesRead = recv(fd, buffer, sizeof(buffer) - 1, 0);
+	if (bytesRead <= 0) {
+		std::cout << "Client déconnecté ou erreur" << std::endl;
+	   this->RemoveClient(fd);
+	} 
+	else
+	{
+		this->clients[fd].appendToBuffer(std::string(buffer));
+		this->process_commands(fd);
+	}
+}
+
+void Server::Start(){
+	//creation de sokcet : il me donne un fd pour communiquer
+	this->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (this->socket_fd == -1)
+		std::cerr << "socket creation failed :(" << std::endl;
+	int opt = 1;
+	// pour eviter l'erreur qui peut s'afficher apres le realnce de serveur apres son arret
+	if (setsockopt(this->socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
+		std::cerr << "setsockopt failed :(" << std::endl;
+	//eviter le block qui peut s'arriver si il ny rien a lire
+	if (fcntl(this->socket_fd, F_SETFL, O_NONBLOCK) == -1)
+		std::cerr << "ERRRRROR" << std::endl;
+	//lier le port 
+	struct sockaddr_in addr;
+	std::memset(&addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_addr.s_addr = INADDR_ANY;
+	addr.sin_port = htons(this->port);
+	if (bind(this->socket_fd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
+	{
+		std::cerr << "ERROR, peut etre port deja utiliser" << std::endl;//message behavior rfc1459
+		return ;
+	}
+	//met le serveur en mode active
+	if (listen(this->socket_fd, SOMAXCONN) == -1)
+		std::cerr << "ERROR, listen failed" << std::endl;
+	// poll commence la serveillance
+	struct pollfd server;
+	server.fd = this->socket_fd;
+	server.events = POLLIN;
+	server.revents = 0;
+	this->fds.push_back(server);
+	std::cout << "Serveur IRC lance. en attente de connexion..." << std::endl;
+	
+	while (this->isStopped == false)
+	{
+		if (poll(&this->fds[0], this->fds.size(), -1) == -1)
+		{
+			std::cerr << "ERROOOR\n";
+			break;
+		}
+		for (size_t i = 0; i < fds.size(); i++)
+		{
+			if (fds[i].revents & POLLIN){
+				if (fds[i].fd == this->socket_fd)
+					this->NewClient();
+				else
+					this->handle_message(fds[i].fd);
+			}
+			else if (fds[i].revents & (POLLHUP | POLLERR))
+			{
+				this->RemoveClient(fds[i].fd);
+			}
+		}
+	}
+}
+
+Server::~Server()
+{}
