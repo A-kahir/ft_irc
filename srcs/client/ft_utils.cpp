@@ -4,9 +4,11 @@
 
 void ft_message(int fd, std::string code_rfc, std::string message, std::string data)
 {
-    std::string print = code_rfc + message;
+    std::string print = ":server " + code_rfc;
     if (!data.empty())
-        print = code_rfc + " :" + data + message;
+        print += " " + data;
+    print += message;
+    print += "\r\n";
 
     send(fd, print.c_str(), print.size(), 0);
 }

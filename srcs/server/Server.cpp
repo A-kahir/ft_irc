@@ -109,7 +109,7 @@ void Server::process_commands(int fd)
 		this->clients[fd].set_fd(fd);
 		if (ft_is_not_cmd(cmd) == 1)
 		{
-			ft_message(fd, "421", " :Unknown command\n", cmd);
+			ft_message(fd, "421", " :Unknown command", cmd);
 			continue;
 		}
 		else
