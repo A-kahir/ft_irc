@@ -40,6 +40,11 @@ int Server::ft_parse_input_join(std::string input, int fd)
 
 	for (size_t i = 0; i < chans.size(); i++)
 	{
+		if (ft_check_max_chans_joined(fd) > 10)
+		{
+			ft_message(fd, "405", " :You have joined too many channels", this->clients[fd].get_nick() + " " + chans[i]);
+			continue;
+		}
 		if (chans[i][0] != '#')
 		{
 			ft_message(fd, "403", " :No such channel", cl.get_nick() + " " + chans[i]);
@@ -124,9 +129,9 @@ int Server::ft_parse_input_join(std::string input, int fd)
 			send(chan->users[i]->get_fd(), join_broadcast.c_str(), join_broadcast.size(), 0);
 		}
 
-		std::string message = ":server 332 " + cl.get_nick() + " #" + chan->name + " :Welcome to your Server\r\n";
+		std::string message = ":" SERVER_NAME " 332 " + cl.get_nick() + " #" + chan->name + " :Welcome to your Server\r\n";
 		send(fd, message.c_str(), message.size(), 0);
-		std::string join_msg = ":server 353 " + cl.get_nick() + " = #" + chan->name + " :";
+		std::string join_msg = cl.get_nick() + " = #" + chan->name + " :";
 		for (size_t i = 0; i < chan->users.size(); i++)
 		{
 			if (ft_is_operator(chan, chan->users[i]->get_fd()) == 1)
@@ -135,9 +140,9 @@ int Server::ft_parse_input_join(std::string input, int fd)
 				join_msg += chan->users[i]->get_nick();
 			join_msg += " ";
 		}
-    	ft_message(fd, "", join_msg, "");
+    	ft_message(fd, "353 ", join_msg, "");
 
-    	std::string end_msg = ":server 366 " + cl.get_nick() + " #" + chan->name + " :End of /NAMES list\r\n";
+    	std::string end_msg = ":" SERVER_NAME " 366 " + cl.get_nick() + " #" + chan->name + " :End of /NAMES list\r\n";
     	send(fd, end_msg.c_str(), end_msg.size(), 0);
 	}
     return (0);
@@ -310,7 +315,7 @@ int Server::ft_parse_input_invit(std::string input, int fd)
     {
 		this->clients[target_user->get_fd()].set_flag_invitation(1);
 
-        std::string message_sender = ":server 341 " + this->clients[fd].get_nick() + " #"
+        std::string message_sender = ":" SERVER_NAME " 341 " + this->clients[fd].get_nick() + " #"
                 + target_user->get_nick() + " " + target_chan->name + "\r\n";
                 send(fd, message_sender.c_str(), message_sender.size(), 0);
 
@@ -429,6 +434,8 @@ int Server::ft_parse_input_mode(std::string input, int fd)
 		return (ft_message(fd, "461", " MODE :Not enough parameters", ""), 1);
 	if (chan[0] == '#')
 		chan.erase(0, 1);
+	else if (chan[0] != '#')
+		return (ft_message(fd, "403", " :No such channel", "#" + chan), 1);
 
 	channels *channel = NULL;
 	for (std::vector<channels>::iterator it = this->chans.begin(); it != this->chans.end(); ++it)
@@ -452,6 +459,11 @@ int Server::ft_parse_input_mode(std::string input, int fd)
 		mode != "+l" && mode != "-l")
 		return (ft_message(fd, "472", " :is unknown mode char to me", mode), 1);
 
+	if (ft_is_operator(channel, fd) == 0)
+	{
+		ft_message(fd, "482", " :You're not channel operator", "#" + chan);
+		return (1);
+	}
 	if ((mode == "+k" || mode == "+o" || mode == "+l") && arg.empty())
     	return (ft_message(fd, "461", " MODE :Not enough parameters", ""), 1);
 	else if (mode == "+o" || mode == "-o")
@@ -536,7 +548,6 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
 		}
 		word = '\001' + word + '\001';
     }
-	this->clients[fd].incr_prv();
     std::vector<std::string> targets = ft_split_tok(all_targets, ',');
     for (size_t i = 0; i < targets.size(); i++)
     {
@@ -601,5 +612,6 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
             ft_message(target_user->get_fd(), "", msg, "");
         }
     }
+	this->clients[fd].incr_prv();
     return (0);
 }

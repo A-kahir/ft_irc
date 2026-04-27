@@ -69,12 +69,10 @@ class client
         time_t get_logtime() const;
 };
 
-// Parsing
-void ft_parse_args(int argc, char **argv);
-
-
 //global functions :
+int ft_parse_args(int argc, char **argv);
 void ft_message(int fd, std::string code_rfc, std::string message, std::string data);
 int ft_is_not_cmd(std::string cmd);
 std::vector<std::string> ft_split_tok(const std::string chanls, char delimiter);
+
 #endif

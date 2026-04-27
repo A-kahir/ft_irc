@@ -4,7 +4,8 @@
 
 void ft_message(int fd, std::string code_rfc, std::string message, std::string data)
 {
-    std::string print = ":server " + code_rfc;
+    std::string server_name =  SERVER_NAME;
+    std::string print = ":" +  server_name + " " + code_rfc;
     if (!data.empty())
         print += " " + data;
     print += message;
@@ -25,7 +26,7 @@ void Server::ft_count_logtime_bot(int fd, std::string user, int target_fd)
 
     std::stringstream otp;
     otp << "Ka3kou3 : Logtime of " << user
-       << " is : " << min << "min " << sec << "sec\n";
+       << " is : " << min << "min " << sec << "sec";
 
     ft_message(fd, "", otp.str(), "");
 }

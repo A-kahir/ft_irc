@@ -95,7 +95,8 @@ void Server::process_commands(int fd)
 		if (!command.empty() && command[command.size() - 1] == '\r')
 			command.erase(command.size() - 1);
 		buffer.erase(0,  pos + 1);
-
+		if (command.length() + 2 > 512)
+			return;
 		std::istringstream save(command);
 		std::string cmd;
 		if (!(save >> cmd))
@@ -129,7 +130,8 @@ void Server::handle_message(int fd)
 	char buffer[1024];
 	std::memset(buffer, 0, sizeof(buffer));
 	ssize_t bytesRead = recv(fd, buffer, sizeof(buffer) - 1, 0);
-	if (bytesRead <= 0) {
+	if (bytesRead <= 0)
+	{
 		std::cout << "Client déconnecté ou erreur" << std::endl;
 	   this->RemoveClient(fd);
 	} 

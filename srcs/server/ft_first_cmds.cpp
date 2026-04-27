@@ -4,7 +4,7 @@
 void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int fd)
 {
     if ((cmd == "JOIN" || cmd == "INVITE" || cmd == "KICK" || cmd == "MODE" || cmd == "TOPIC" || cmd == "PRIVMSG")
-    && this->clients[fd].Auth_is_registered() == 0)
+        && this->clients[fd].Auth_is_registered() == 0)
     {
         ft_message(fd, "451", " :You have not registered", "");
         return;
@@ -63,7 +63,7 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
                     if (this->have_boot == 1)
                         ft_message(fd, "", "You Can't Add More than one Ka3kou3 ;)", "");
                     this->have_boot = 1;
-                    cl.set_nick("Ka3kou3");
+                    cl.set_nick("ka3kou3");
                     cl.Auth_nick = 1;
                     cl.Auth_user = 1;
                     cl.set_user("Bot");
@@ -99,9 +99,9 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
             {
                 cl.Auth_user = 1;
                 std::string msg1 = "001 " + this->clients[fd].get_nick() + " :Welcome to the IRC Network " + this->clients[fd].get_nick() + "!" + this->clients[fd].get_user() + "@localhost\n"
-                                ":server 002 " + this->clients[fd].get_nick() + " :Your host is server, running version 1.0\r\n"
-                                + ":server 003 " + this->clients[fd].get_nick() + " :This server was created Today\r\n"
-                                + ":server 004 " + this->clients[fd].get_nick() + " server 1.0";
+                                ":"SERVER_NAME " 002 " + this->clients[fd].get_nick() + " :Your host is server, running version 1.0\r\n"
+                                + ":" SERVER_NAME " 003 " + this->clients[fd].get_nick() + " :This server was created Today\r\n"
+                                + ":"SERVER_NAME" 004 " + this->clients[fd].get_nick() + " server 1.0";
             
             	ft_message(fd, "", msg1, "");
             }

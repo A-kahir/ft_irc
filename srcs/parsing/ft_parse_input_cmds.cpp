@@ -28,10 +28,6 @@ int Server::ft_parse_input_nick(std::string input, client *cl, int fd)
         ft_message(fd, "461", " :Not enough parameters", "");
         return (1);
     }
-    if (input.length() > 9)
-    {
-        return (1);
-    }
     for (size_t i = 0; i < input.length(); i++)
     {
         if ((!isalnum(input[i]) && input[i] != '-' &&
@@ -43,6 +39,11 @@ int Server::ft_parse_input_nick(std::string input, client *cl, int fd)
             ft_message(fd, "432", " :Erroneous nickname", input);
             return (1);
         }
+    }
+    if (input.length() > 9)
+    {
+        ft_message(fd, "432", " :Erroneous nickname", input);;
+        return (1);
     }
     cl->set_nick(input);
     return (0);

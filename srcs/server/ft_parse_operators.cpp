@@ -103,7 +103,6 @@ void Server::ft_operators(std::string cmd, std::string input, client &cl, int fd
 		std::string mode;
 		std::string user;
 		split >> mode >> user;
-		printf("mode => [%s]\nuser => [%s]\n", mode.c_str(), user.c_str());
 		if (mode.empty() || user.empty())
 		{
 			ft_message(fd, "461", " :Not enough parameters", "");
@@ -133,8 +132,7 @@ void Server::ft_operators(std::string cmd, std::string input, client &cl, int fd
 		if (mode == "/privmsg")
 		{
 			    std::stringstream otp;
-					otp << "Ka3kou3 : " << user
-					<< " sent " <<target_user->get_prvcount() << " PRIVMSG";
+					otp << "Ka3kou3 : " << user << " sent " <<target_user->get_prvcount() << " PRIVMSG";
 			ft_message(fd, "", otp.str() , "");
 		}
 	}
