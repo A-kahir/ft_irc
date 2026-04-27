@@ -12,6 +12,8 @@
 #include <netinet/in.h>
 #include "Client.hpp"
 
+#define SERVER_NAME "hassan&houssien"
+
 class client;
 class channels;
 
@@ -46,7 +48,7 @@ class Server
         int ft_parse_input_nick(std::string input, client *cl, int fd);
         int ft_parse_input_user(std::string input, client *cl, int fd);
         
-        //main func of operators:
+        // main func of operators:
         void ft_operators(std::string cmd, std::string input, client &cl, int fd);
         bool ft_is_operator(channels *chan, int fd);
 
@@ -58,11 +60,12 @@ class Server
         int ft_parse_input_mode(std::string input, int fd);
         int ft_parse_input_privmsg(std::string input, int fd);
 
-        //helper functions :
+        // helper functions :
         channels* ft_get_channel(std::string name);
         client* ft_get_user_by_nick(std::string nick);
         bool ft_is_user_in_channel(channels *chan, int fd);
         std::string ft_build_message(int fd);
+        int ft_check_max_chans_joined(int fd);
 
         //Bot
         bool have_boot;

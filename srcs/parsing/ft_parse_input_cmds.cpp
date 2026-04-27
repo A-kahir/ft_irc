@@ -5,12 +5,12 @@ int Server::ft_parse_input_pass(std::string input, int fd)
 {
     if (input.empty() || input[0] == ' ')
     {
-        ft_message(fd, "461", " PASS :Not enough parameters\n", "");
+        ft_message(fd, "461", " PASS :Not enough parameters", "");
         return (1);
     }
     else if (input != this->get_password())
     {
-        ft_message(fd, "464", " :Password incorrect\n", "");
+        ft_message(fd, "464", " :Password incorrect", "");
         return (1);
     }
     return (0);
@@ -20,16 +20,12 @@ int Server::ft_parse_input_nick(std::string input, client *cl, int fd)
 {
     if (input.empty())
     {
-        ft_message(fd, "431", " :No nickname given\n", "");
+        ft_message(fd, "431", " :No nickname given", "");
         return (1);
     }
     else if (input[0] == ' ')
     {
-        ft_message(fd, "461", " :Not enough parameters\n", "");
-        return (1);
-    }
-    if (input.length() > 9)
-    {
+        ft_message(fd, "461", " :Not enough parameters", "");
         return (1);
     }
     for (size_t i = 0; i < input.length(); i++)
@@ -40,9 +36,14 @@ int Server::ft_parse_input_nick(std::string input, client *cl, int fd)
             input[i] != '^' && input[i] != '{' &&
             input[i] != '}') || input[i] == ' ')
         {
-            ft_message(fd, "432", " :Erroneous nickname\n", input);
+            ft_message(fd, "432", " :Erroneous nickname", input);
             return (1);
         }
+    }
+    if (input.length() > 9)
+    {
+        ft_message(fd, "432", " :Erroneous nickname", input);;
+        return (1);
     }
     cl->set_nick(input);
     return (0);
@@ -52,7 +53,7 @@ int Server::ft_parse_input_user(std::string input, client *cl, int fd)
 {
     if (input.empty())
     {
-        ft_message(fd, "461", " USER :Not enough parameters\n", "");
+        ft_message(fd, "461", " USER :Not enough parameters", "");
         return (1);
     }
 
@@ -79,7 +80,7 @@ int Server::ft_parse_input_user(std::string input, client *cl, int fd)
     }
     if (result.size() < 4)
     {
-        ft_message(fd, "461", " USER :Not enough parameters\n", "");
+        ft_message(fd, "461", " USER :Not enough parameters", "");
         return (1);
     }
     cl->set_user(result[0]);

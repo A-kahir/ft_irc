@@ -4,7 +4,8 @@
 
 int main(int argc, char **argv)
 {
-    ft_parse_args(argc, argv);
+    if (ft_parse_args(argc, argv) == 1)
+        return (1);
     Server server(atoi(argv[1]), argv[2]);
     server.Start();
     close (server.get_fd());

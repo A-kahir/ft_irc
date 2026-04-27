@@ -39,3 +39,14 @@ std::string Server::ft_build_message(int fd)
            this->clients[fd].get_user() + "@" +
            this->clients[fd].get_hostname();
 }
+
+int Server::ft_check_max_chans_joined(int fd)
+{
+	int counter = 1;
+	for (size_t i = 0; i < this->chans.size(); i++)
+	{
+		if (ft_is_user_in_channel(&this->chans[i], fd) == 1)
+			counter++;
+	}
+	return (counter);
+}
