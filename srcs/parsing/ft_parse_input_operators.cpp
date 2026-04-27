@@ -554,7 +554,6 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
         std::string current_target = targets[i];
         if (current_target.empty())
             continue;
-
         if (current_target[0] == '#' || current_target[0] == '&')
         {
             std::string chan_name = current_target;
@@ -566,7 +565,6 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
                 ft_message(fd, "403", " :No such channel", current_target);
                 continue;
             }
-
             int is_in_channel = 0;
             for (size_t j = 0; j < target_chan->users.size(); j++)
             {
@@ -607,11 +605,11 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
                 ft_message(fd, "401", " :No such nick", current_target);
                 continue;
             }
+			this->clients[fd].incr_prv();
             std::string msg = ":" + this->clients[fd].get_nick() + "!" + this->clients[fd].get_user() + "@"
             + this->clients[fd].get_hostname() + " PRIVMSG " + target_user->get_nick() + " :" + word + "";
             ft_message(target_user->get_fd(), "", msg, "");
         }
     }
-	this->clients[fd].incr_prv();
     return (0);
 }

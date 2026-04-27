@@ -99,9 +99,9 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
             {
                 cl.Auth_user = 1;
                 std::string msg1 = "001 " + this->clients[fd].get_nick() + " :Welcome to the IRC Network " + this->clients[fd].get_nick() + "!" + this->clients[fd].get_user() + "@localhost\n"
-                                ":"SERVER_NAME " 002 " + this->clients[fd].get_nick() + " :Your host is server, running version 1.0\r\n"
+                                ":" SERVER_NAME " 002 " + this->clients[fd].get_nick() + " :Your host is server, running version 1.0\r\n"
                                 + ":" SERVER_NAME " 003 " + this->clients[fd].get_nick() + " :This server was created Today\r\n"
-                                + ":"SERVER_NAME" 004 " + this->clients[fd].get_nick() + " server 1.0";
+                                + ":" SERVER_NAME" 004 " + this->clients[fd].get_nick() + " server 1.0";
             
             	ft_message(fd, "", msg1, "");
             }

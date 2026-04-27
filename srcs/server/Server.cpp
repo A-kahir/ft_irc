@@ -118,6 +118,7 @@ void Server::process_commands(int fd)
 			ft_first_cmds(cmd, input, this->clients[fd], fd);
 			if (this->clients[fd].Auth_is_registered() == 1)
 			{
+				std::cout << "client " << fd << " connected\n";
 				this->clients[fd].Auth_done = 1;
 				ft_operators(cmd, input, this->clients[fd], fd);
 			}
