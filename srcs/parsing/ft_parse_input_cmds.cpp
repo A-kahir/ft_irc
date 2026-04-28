@@ -63,7 +63,7 @@ int Server::ft_parse_input_user(std::string input, client *cl, int fd)
         input.erase(input.length() - 1, 1);
 
     std::vector<std::string> result;
-    std::istringstream tmp(input);
+    std::stringstream tmp(input);
     std::string word;
     while (tmp >> word)
     {

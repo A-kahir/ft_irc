@@ -12,7 +12,7 @@
 #include <netinet/in.h>
 #include "Client.hpp"
 
-#define SERVER_NAME "hassan&houssien"
+#define SERVER_NAME "irc_server"
 
 class client;
 class channels;

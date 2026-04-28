@@ -48,7 +48,7 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
                 if (it->second.get_nick() == input)
                 {
                     ft_message(fd, "433", " :Nickname is already in use", "");
-                        return;
+                    return;
                 }
             }
             if (ft_parse_input_nick(input, &cl, fd) == 1)

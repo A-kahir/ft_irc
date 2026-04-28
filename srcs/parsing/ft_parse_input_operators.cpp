@@ -498,6 +498,17 @@ int Server::ft_parse_input_mode(std::string input, int fd)
 					break;
 				}
 			}
+			if (channel->operators.empty() && channel->users.size() > 0)
+			{
+				for (size_t j = 0; j < channel->users.size(); j++)
+				{
+					if (channel->users[j] != target)
+					{
+						channel->operators.push_back(channel->users[j]);
+						break;
+					}
+				}
+			}
 		}
 	}
 	else if (mode == "+l")

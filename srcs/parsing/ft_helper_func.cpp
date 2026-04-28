@@ -2,7 +2,6 @@
 #include "../../includes/Client.hpp"
 #include "../../includes/Channels.hpp"
 
-
 channels* Server::ft_get_channel(std::string name)
 {
     for (size_t i = 0; i < this->chans.size(); i++)
