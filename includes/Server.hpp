@@ -13,6 +13,9 @@
 #include "Client.hpp"
 
 #define SERVER_NAME "irc_server"
+#define RED "\033[31m"
+#define GREEN "\033[32m"
+#define RESET_COLOR "\033[0m"
 
 class client;
 class channels;
@@ -20,7 +23,7 @@ class channels;
 class Server
 {
     private :
-        int port;
+        unsigned int port;
         int socket_fd;
         std::string password;
         bool isStopped;

@@ -77,7 +77,7 @@ void Server::RemoveClient(int fd)
             break;
         }
     }
-    std::cout << "Client " << fd << " is disconnected" << std::endl;
+    std::cout << RED << "Client " << fd << " Disconnected" << RESET_COLOR << std::endl;
 }
 
 std::string Server::get_password() const

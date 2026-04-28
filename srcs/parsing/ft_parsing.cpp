@@ -4,13 +4,13 @@ int ft_parse_args(int argc, char **argv)
 {
     if (argc != 3)
     {
-        std::cerr << "Invalid Args" << std::endl;
+        std::cout << "Invalid Args" << std::endl;
         return (1);
     }
 
     if (atoi(argv[1]) < 1024 || atoi(argv[1]) >= 65536)
     {
-        std::cerr << "Invalid Port : Make sure you put a correct Port" << std::endl;
+        std::cout << "Invalid Port : Make sure you put a correct Port" << std::endl;
         return (1);
     }
 
@@ -18,7 +18,7 @@ int ft_parse_args(int argc, char **argv)
     {
         if (argv[1][i] && !isdigit(argv[1][i]))
         {
-            std::cerr << "Invalid Args" << std::endl;
+            std::cout << "Invalid Args" << std::endl;
             return (1);
         }
     }
@@ -27,7 +27,7 @@ int ft_parse_args(int argc, char **argv)
     {
         if (argv[2][i] == ' ')
         {
-            std::cerr << "Invalid Args" << std::endl;
+            std::cout << "Invalid Args" << std::endl;
             return (1);
         }
     }
