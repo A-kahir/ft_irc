@@ -13,8 +13,9 @@
 #include "Client.hpp"
 
 #define SERVER_NAME "irc_server"
-#define RED "\033[31m"
-#define GREEN "\033[32m"
+
+#define RED "\033[1;31m"
+#define GREEN "\033[1;32m"
 #define RESET_COLOR "\033[0m"
 
 class client;
