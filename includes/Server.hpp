@@ -27,7 +27,6 @@ class Server
         unsigned int port;
         int socket_fd;
         std::string password;
-        bool isStopped;
         
         std::vector<struct pollfd> fds;
         std::map<int , client> clients;

@@ -3,7 +3,6 @@
  
 Server::Server(int port, std::string password) : port(port), password(password)
 {
-	isStopped = false;
 	socket_fd = -1;
 	have_boot = 0;
 }
@@ -116,9 +115,10 @@ void Server::process_commands(int fd)
 		else
 		{
 			ft_first_cmds(cmd, input, this->clients[fd], fd);
+			if (this->clients[fd].Auth_is_registered() == 1 && this->clients[fd].Auth_done == 0)
+				 std::cout << GREEN << "Client " << fd << " connected" << RESET_COLOR << std::endl;
 			if (this->clients[fd].Auth_is_registered() == 1)
 			{
-				std::cout << "client " << fd << " connected\n";
 				this->clients[fd].Auth_done = 1;
 				ft_operators(cmd, input, this->clients[fd], fd);
 			}
@@ -132,10 +132,7 @@ void Server::handle_message(int fd)
 	std::memset(buffer, 0, sizeof(buffer));
 	ssize_t bytesRead = recv(fd, buffer, sizeof(buffer) - 1, 0);
 	if (bytesRead <= 0)
-	{
-		std::cout << "Client déconnecté ou erreur" << std::endl;
 	   this->RemoveClient(fd);
-	} 
 	else
 	{
 		this->clients[fd].appendToBuffer(std::string(buffer));
@@ -144,18 +141,14 @@ void Server::handle_message(int fd)
 }
 
 void Server::Start(){
-	//creation de sokcet : il me donne un fd pour communiquer
 	this->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->socket_fd == -1)
-		std::cerr << "socket creation failed :(" << std::endl;
+		std::cerr << "Error : socket failed :(" << std::endl;
 	int opt = 1;
-	// pour eviter l'erreur qui peut s'afficher apres le realnce de serveur apres son arret
 	if (setsockopt(this->socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
-		std::cerr << "setsockopt failed :(" << std::endl;
-	//eviter le block qui peut s'arriver si il ny rien a lire
+		std::cerr << "Error : setsockopt failed :(" << std::endl;
 	if (fcntl(this->socket_fd, F_SETFL, O_NONBLOCK) == -1)
-		std::cerr << "ERRRRROR" << std::endl;
-	//lier le port 
+		std::cerr << "Error : fcntl failed :(" << std::endl;
 	struct sockaddr_in addr;
 	std::memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
@@ -163,13 +156,11 @@ void Server::Start(){
 	addr.sin_port = htons(this->port);
 	if (bind(this->socket_fd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
 	{
-		std::cerr << "ERROR, peut etre port deja utiliser" << std::endl;//message behavior rfc1459
+		std::cerr << "ERROR: can't bind :(" << std::endl;
 		return ;
 	}
-	//met le serveur en mode active
 	if (listen(this->socket_fd, SOMAXCONN) == -1)
-		std::cerr << "ERROR, listen failed" << std::endl;
-	// poll commence la serveillance
+		std::cerr << "ERROR: listen failed :(" << std::endl;
 	struct pollfd server;
 	server.fd = this->socket_fd;
 	server.events = POLLIN;
@@ -177,11 +168,11 @@ void Server::Start(){
 	this->fds.push_back(server);
 	std::cout << "Serveur IRC lance. en attente de connexion..." << std::endl;
 	
-	while (this->isStopped == false)
+	while (1)
 	{
 		if (poll(&this->fds[0], this->fds.size(), -1) == -1)
 		{
-			std::cerr << "ERROOOR\n";
+			std::cerr << "Error : Poll failed:(\n";
 			break;
 		}
 		for (size_t i = 0; i < fds.size(); i++)

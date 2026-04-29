@@ -106,5 +106,7 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
             	ft_message(fd, "", msg1, "");
             }
         }
+
     }
+    
 }
