@@ -76,7 +76,7 @@ void Server::RemoveClient(int fd)
             break;
         }
     }
-    std::cout << RED << "Client " << fd << " Disconnected" << RESET_COLOR << std::endl;
+    std::cout << RED << "==>  Client " << fd << " Disconnected" << RESET_COLOR << std::endl;
 }
 
 std::string Server::get_password() const
@@ -116,7 +116,7 @@ void Server::process_commands(int fd)
 		{
 			ft_first_cmds(cmd, input, this->clients[fd], fd);
 			if (this->clients[fd].Auth_is_registered() == 1 && this->clients[fd].Auth_done == 0)
-				 std::cout << GREEN << "Client " << fd << " connected" << RESET_COLOR << std::endl;
+				 std::cout << GREEN << "==>  Client " << fd << " Connected" << RESET_COLOR << std::endl;
 			if (this->clients[fd].Auth_is_registered() == 1)
 			{
 				this->clients[fd].Auth_done = 1;
