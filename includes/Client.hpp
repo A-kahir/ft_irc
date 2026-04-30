@@ -11,7 +11,6 @@
 
 #include <stdio.h>
 
-// class Server;
 class channels;
 
 class client
@@ -19,7 +18,7 @@ class client
     private:
         int fd;
         int prv_count;
-        std::string buffer;//hada ghaykon fih lmsg kima dkhel ghaykon des segment***** khask wsel /r/n
+        std::string buffer;
         std::string nick;
         std::string user;
         std::string hostname;
@@ -38,8 +37,8 @@ class client
         bool Auth_done;
         bool Auth_is_registered();
 
-        void appendToBuffer(const std::string data);//////// hadi bach data kamla tkon mjmo3a f buffer wa7d 
-        std::string& get_buffer();/////bach n9der  nkhdem bih ana 3ndi
+        void appendToBuffer(const std::string data);
+        std::string& get_buffer();
 
         int get_fd() const;
         void set_fd(int new_fd);

@@ -16,6 +16,10 @@
 
 #define RED "\033[1;31m"
 #define GREEN "\033[1;32m"
+
+#define UNDERLINE "\033[4m"
+#define RESET_UNDERLINE "\033[24m"
+
 #define RESET_COLOR "\033[0m"
 
 class client;

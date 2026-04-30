@@ -34,6 +34,7 @@ void Server::NewClient(){
 
 void Server::RemoveClient(int fd)
 {
+	std::string nickname = this->clients[fd].get_nick();
     client *cl = &this->clients[fd];
 	if (have_boot)
     	this->have_boot = 0;
@@ -76,7 +77,7 @@ void Server::RemoveClient(int fd)
             break;
         }
     }
-    std::cout << RED << "==>  Client " << fd << " Disconnected" << RESET_COLOR << std::endl;
+    std::cout << RED << "==>  Client " << fd << " " << UNDERLINE << nickname << RESET_UNDERLINE << " Disconnected" << RESET_COLOR << std::endl;
 }
 
 std::string Server::get_password() const
@@ -116,7 +117,9 @@ void Server::process_commands(int fd)
 		{
 			ft_first_cmds(cmd, input, this->clients[fd], fd);
 			if (this->clients[fd].Auth_is_registered() == 1 && this->clients[fd].Auth_done == 0)
-				 std::cout << GREEN << "==>  Client " << fd << " Connected" << RESET_COLOR << std::endl;
+			{
+				std::cout << GREEN << "==>  Client " << fd << " " << UNDERLINE << this->clients[fd].get_nick() << RESET_UNDERLINE << " Connected" << RESET_COLOR << std::endl;
+			}
 			if (this->clients[fd].Auth_is_registered() == 1)
 			{
 				this->clients[fd].Auth_done = 1;
@@ -166,7 +169,15 @@ void Server::Start(){
 	server.events = POLLIN;
 	server.revents = 0;
 	this->fds.push_back(server);
-	std::cout << "Serveur IRC lance. en attente de connexion..." << std::endl;
+
+	std::string text = "IRC server started. Waiting for connection...";
+	std::cout << GREEN;
+	for (size_t i = 0; i < text.size(); i++)
+	{
+		std::cout << text[i] << std::flush;
+		usleep(40000);
+	}
+	std::cout << RESET_COLOR << std::endl;
 	
 	while (1)
 	{

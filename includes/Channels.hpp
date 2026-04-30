@@ -5,7 +5,6 @@
 #include <vector>
 
 class client;
-class Server;
 
 class channels
 {
