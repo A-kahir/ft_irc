@@ -6,7 +6,7 @@ int ft_is_not_cmd(std::string cmd)
 {
 	if (cmd != "PASS" && cmd != "NICK" && cmd != "USER"
 		&& cmd != "JOIN" && cmd != "KICK" && cmd != "INVITE" && cmd != "TOPIC"
-		&& cmd != "MODE" && cmd != "PRIVMSG" && cmd != "KA3KOU3")
+		&& cmd != "MODE" && cmd != "PRIVMSG" && cmd != "KA3KOU3" cmd != "QUIT")
 	{
 		return (1);
 	}
@@ -90,6 +90,11 @@ void Server::ft_operators(std::string cmd, std::string input, client &cl, int fd
 	else if (cmd == "PRIVMSG" && cl.Auth_done)
 	{
 		if (ft_parse_input_privmsg(input, fd) == 1)
+			return ;
+	}
+	else if (cmd == "QUIT" && cl.Auth_done)
+	{
+		if (ft_parse_quit(input, fd) == 1)
 			return ;
 	}
 	else if (cmd == "KA3KOU3" && cl.Auth_done)

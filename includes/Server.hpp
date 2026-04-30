@@ -66,6 +66,7 @@ class Server
         int ft_parse_input_topic(std::string input, int fd);
         int ft_parse_input_mode(std::string input, int fd);
         int ft_parse_input_privmsg(std::string input, int fd);
+        int ft_parse_quit(std::string input, int fd);
 
         // helper functions :
         channels* ft_get_channel(std::string name);

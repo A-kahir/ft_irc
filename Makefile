@@ -7,6 +7,7 @@ SRC = srcs/main.cpp \
       srcs/client/client.cpp \
       srcs/client/ft_utils.cpp \
       srcs/parsing/ft_parsing.cpp \
+      srcs/parsing/ft_parse_quit.cpp \
       srcs/parsing/ft_parse_input_cmds.cpp \
       srcs/parsing/ft_parse_input_operators.cpp \
       srcs/parsing/ft_helper_func.cpp \

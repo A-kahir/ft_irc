@@ -18,11 +18,11 @@ void Server::NewClient(){
 	int client_fd = accept(this->socket_fd, (struct sockaddr *)&client_addr, &client_len);
 	if (client_fd == -1)
 	{
-		std::cerr << "ERROOoor client\n";
+		std::cerr << "Error accept failed :(\n";
 		return ;
 	}
 	if (fcntl(client_fd, F_SETFL, O_NONBLOCK) == -1)
-		std::cerr << "ERRRRROR" << std::endl;
+		std::cerr << "Error fcntl failed :(" << std::endl;
 	struct pollfd cl;
 	cl.fd = client_fd;
 	cl.events = POLLIN;
