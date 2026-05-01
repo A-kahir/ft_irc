@@ -13,8 +13,9 @@ class channels
         std::string name;
         std::vector<client*> users;
         std::vector<client*> operators;
-
         channels();
+        std::vector<int> getMembers();
+        bool isMember(int fd);
         bool invit_only;
         bool topic_rest;
         int user_limit;

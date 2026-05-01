@@ -6,7 +6,7 @@ int ft_is_not_cmd(std::string cmd)
 {
 	if (cmd != "PASS" && cmd != "NICK" && cmd != "USER"
 		&& cmd != "JOIN" && cmd != "KICK" && cmd != "INVITE" && cmd != "TOPIC"
-		&& cmd != "MODE" && cmd != "PRIVMSG" && cmd != "KA3KOU3" cmd != "QUIT")
+		&& cmd != "MODE" && cmd != "PRIVMSG" && cmd != "KA3KOU3" && cmd != "QUIT")
 	{
 		return (1);
 	}
