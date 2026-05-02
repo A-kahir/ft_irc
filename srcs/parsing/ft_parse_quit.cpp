@@ -38,7 +38,7 @@ int Server::ft_parse_quit(std::string input, int fd)
                 send(members[i], msg.c_str(), msg.size(), 0);
             }
         }
-        this->RemoveClient(fd);
     }
-    return (0);
+    this->RemoveClient(fd);
+    return (1);
 }

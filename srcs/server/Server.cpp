@@ -116,6 +116,8 @@ void Server::process_commands(int fd)
 		else
 		{
 			ft_first_cmds(cmd, input, this->clients[fd], fd);
+			if (this->clients.find(fd) == this->clients.end())
+                return;
 			if (this->clients[fd].Auth_is_registered() == 1 && this->clients[fd].Auth_done == 0)
 			{
 				std::cout << GREEN << "==>  Client " << fd << " " << UNDERLINE << this->clients[fd].get_nick() << RESET_UNDERLINE << " Connected" << RESET_COLOR << std::endl;
@@ -124,6 +126,8 @@ void Server::process_commands(int fd)
 			{
 				this->clients[fd].Auth_done = 1;
 				ft_operators(cmd, input, this->clients[fd], fd);
+				if (this->clients.find(fd) == this->clients.end())
+                	return;
 			}
 		}
 	}
@@ -169,7 +173,6 @@ void Server::Start(){
 	server.events = POLLIN;
 	server.revents = 0;
 	this->fds.push_back(server);
-
 	std::string text = "IRC server started. Waiting for connection...";
 	std::cout << GREEN;
 	for (size_t i = 0; i < text.size(); i++)
@@ -178,7 +181,6 @@ void Server::Start(){
 		usleep(40000);
 	}
 	std::cout << RESET_COLOR << std::endl;
-	
 	while (1)
 	{
 		if (poll(&this->fds[0], this->fds.size(), -1) == -1)
@@ -195,9 +197,7 @@ void Server::Start(){
 					this->handle_message(fds[i].fd);
 			}
 			else if (fds[i].revents & (POLLHUP | POLLERR))
-			{
 				this->RemoveClient(fds[i].fd);
-			}
 		}
 	}
 }

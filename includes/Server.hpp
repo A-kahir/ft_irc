@@ -31,7 +31,6 @@ class Server
         unsigned int port;
         int socket_fd;
         std::string password;
-        
         std::vector<struct pollfd> fds;
         std::map<int , client> clients;
         std::vector<channels> chans;
