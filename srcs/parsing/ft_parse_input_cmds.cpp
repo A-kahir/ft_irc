@@ -84,8 +84,8 @@ int Server::ft_parse_input_user(std::string input, client *cl, int fd)
         return (1);
     }
     cl->set_user(result[0]);
-    cl->set_hostname(result[1]);
-    cl->set_servername(result[2]);
+    cl->set_hostname("localhost");
+    cl->set_servername(SERVER_NAME);
     cl->set_realname(result[3]);
     return (0);
 }

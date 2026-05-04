@@ -50,7 +50,7 @@ int Server::ft_parse_input_join(std::string input, int fd)
 			ft_message(fd, "403", " :No such channel", cl.get_nick() + " " + chans[i]);
 			continue;
 		}
-		if (!ft_is_valid_channel(chans[i]) && key[i] && keys[i].empty())
+		if (!ft_is_valid_channel(chans[i]))
 		{
 			ft_message(fd, "403", " :No such channel", cl.get_nick() + " " + chans[i]);
 			continue;
@@ -73,9 +73,14 @@ int Server::ft_parse_input_join(std::string input, int fd)
 					ft_message(fd, "473", " :Cannot join channel (+i)", "#" + chan->name);
 					continue;
 				}
+				std::string curr_key;
+				if (i < keys.size())
+					curr_key = keys[i];
+				else
+					curr_key = "";
 				if (!chan->pswrd.empty())
 				{
-					if (key.empty() || key != chan->pswrd)
+					if (curr_key.empty() || curr_key != chan->pswrd)
 					{
 						ft_message(fd, "475", " :Cannot join channel (+k)", "#" + chan->name);
 						continue;
@@ -95,15 +100,7 @@ int Server::ft_parse_input_join(std::string input, int fd)
 			new_chan.name = chans[i];
 			new_chan.users.push_back(&cl);
 			new_chan.operators.push_back(&cl);
-			if (i < keys.size()) 
-				new_chan.pswrd = keys[i];
-			else 
-				new_chan.pswrd = "";
-
-			if (keys.size() != chans.size())
-			{
-				new_chan.pswrd = "";
-			}
+			new_chan.pswrd = "";
 			this->chans.push_back(new_chan);
 			chan = &this->chans.back();
 		}
@@ -122,8 +119,7 @@ int Server::ft_parse_input_join(std::string input, int fd)
             	continue;
 			chan->users.push_back(&cl);
 		}
-		std::string join_broadcast = ":" + cl.get_nick() + "!" + cl.get_user() +
-        "@localhost JOIN :#" + chan->name + "\r\n";
+		std::string join_broadcast =  ft_build_message(fd) + " JOIN :#" + chan->name + "\r\n";
 		for (size_t i = 0; i < chan->users.size(); i++)
 		{
 			send(chan->users[i]->get_fd(), join_broadcast.c_str(), join_broadcast.size(), 0);

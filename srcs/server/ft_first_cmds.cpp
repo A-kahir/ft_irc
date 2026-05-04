@@ -67,8 +67,8 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
                     cl.Auth_nick = 1;
                     cl.Auth_user = 1;
                     cl.set_user("Bot");
-                    cl.set_hostname("0");
-                    cl.set_servername("0");
+                    cl.set_hostname("localhost");
+                    cl.set_servername(SERVER_NAME);
                     cl.set_realname("ka3kou3_Bot");
                     std::string msg = "You Add Ka3kou3 to your Server\r\nYou can use :\r\n   -> Ka3kou3 /logtime <username> : to check logtime\r\n   -> Ka3kou3 /privmsg <username> : to check number of message you send";
                     ft_message(fd, "", msg, "");
