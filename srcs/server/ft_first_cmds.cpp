@@ -61,7 +61,10 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
                 if (checker == "BOT")
                 {
                     if (this->have_boot == 1)
+                    {
                         ft_message(fd, "", "You Can't Add More than one Ka3kou3 ;)", "");
+                        return;
+                    }
                     this->have_boot = 1;
                     cl.set_nick("ka3kou3");
                     cl.Auth_nick = 1;
