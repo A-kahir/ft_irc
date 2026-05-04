@@ -312,13 +312,12 @@ int Server::ft_parse_input_invit(std::string input, int fd)
 		this->clients[target_user->get_fd()].set_flag_invitation(1);
 
         std::string message_sender = ":" SERVER_NAME " 341 " + this->clients[fd].get_nick() + " #"
-                + target_user->get_nick() + " " + target_chan->name + "\r\n";
+                + target_chan->name + " " + target_user->get_nick() + "\r\n";
                 send(fd, message_sender.c_str(), message_sender.size(), 0);
 
-        std::string message_getter = ":" + this->clients[fd].get_nick() +
-                "!" + this->clients[fd].get_user() + "@" + this->clients[fd].get_hostname() + " INVITE "
-                + target_user->get_nick() + " :#" + target_chan->name + "";
-                ft_message(target_user->get_fd(), "", message_getter.c_str(), "");
+        std::string message_getter = ft_build_message(fd) + " INVITE "
+                + target_user->get_nick() + " :#" + target_chan->name + "\r\n";
+                send(target_user->get_fd(), message_getter.c_str(), message_getter.size(), 0);
     }
     return (0);
 }
@@ -613,9 +612,8 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
                 continue;
             }
 			this->clients[fd].incr_prv();
-            std::string msg = ":" + this->clients[fd].get_nick() + "!" + this->clients[fd].get_user() + "@"
-            + this->clients[fd].get_hostname() + " PRIVMSG " + target_user->get_nick() + " :" + word + "";
-            ft_message(target_user->get_fd(), "", msg, "");
+            std::string msg = ft_build_message(fd) + " PRIVMSG " + target_user->get_nick() + " :" + word + "\r\n";
+            send(target_user->get_fd(), msg.c_str(), msg.size(), 0);
         }
     }
     return (0);

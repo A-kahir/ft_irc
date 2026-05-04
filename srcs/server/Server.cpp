@@ -96,7 +96,7 @@ void Server::process_commands(int fd)
 			command.erase(command.size() - 1);
 		buffer.erase(0,  pos + 1);
 		if (command.length() + 2 > 512)
-			return;
+			continue;
 		std::istringstream save(command);
 		std::string cmd;
 		if (!(save >> cmd))
