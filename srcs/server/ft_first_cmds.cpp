@@ -98,7 +98,7 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
             else
             {
                 cl.Auth_user = 1;
-                std::string msg1 = "001 " + this->clients[fd].get_nick() + " :Welcome to the IRC Network " + this->clients[fd].get_nick() + "!" + this->clients[fd].get_user() + "@localhost\n"
+                std::string msg1 = "001 " + this->clients[fd].get_nick() + " :Welcome to the IRC Network " + ft_build_message(fd) + "\r\n"
                                 ":" SERVER_NAME " 002 " + this->clients[fd].get_nick() + " :Your host is server, running version 1.0\r\n"
                                 + ":" SERVER_NAME " 003 " + this->clients[fd].get_nick() + " :This server was created Today\r\n"
                                 + ":" SERVER_NAME" 004 " + this->clients[fd].get_nick() + " server 1.0";
@@ -106,7 +106,5 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
             	ft_message(fd, "", msg1, "");
             }
         }
-
     }
-    
 }
