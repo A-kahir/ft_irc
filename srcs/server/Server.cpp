@@ -127,7 +127,9 @@ void Server::process_commands(int fd)
 				this->clients[fd].Auth_done = 1;
 				ft_operators(cmd, input, this->clients[fd], fd);
 				if (this->clients.find(fd) == this->clients.end())
-                	return;
+				{
+					return;
+				}
 			}
 		}
 	}
@@ -148,6 +150,7 @@ void Server::handle_message(int fd)
 }
 
 void Server::Start(){
+	signal(SIGPIPE, SIG_IGN);
 	this->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->socket_fd == -1)
 		std::cerr << "Error : socket failed :(" << std::endl;

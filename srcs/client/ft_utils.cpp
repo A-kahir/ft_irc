@@ -10,7 +10,6 @@ void ft_message(int fd, std::string code_rfc, std::string message, std::string d
         print += " " + data;
     print += message;
     print += "\r\n";
-
     send(fd, print.c_str(), print.size(), 0);
 }
 

@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <netinet/in.h>
+#include <signal.h>
 #include "Client.hpp"
 
 #define SERVER_NAME "irc_server"
