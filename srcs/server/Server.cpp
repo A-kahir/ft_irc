@@ -22,7 +22,10 @@ void Server::NewClient(){
 		return ;
 	}
 	if (fcntl(client_fd, F_SETFL, O_NONBLOCK) == -1)
+	{
 		std::cerr << "Error fcntl failed :(" << std::endl;
+		return ;
+	}
 	struct pollfd cl;
 	cl.fd = client_fd;
 	cl.events = POLLIN;
@@ -141,7 +144,7 @@ void Server::handle_message(int fd)
 	std::memset(buffer, 0, sizeof(buffer));
 	ssize_t bytesRead = recv(fd, buffer, sizeof(buffer) - 1, 0);
 	if (bytesRead <= 0)
-	   this->RemoveClient(fd);
+		this->RemoveClient(fd);
 	else
 	{
 		this->clients[fd].appendToBuffer(std::string(buffer));
@@ -150,15 +153,24 @@ void Server::handle_message(int fd)
 }
 
 void Server::Start(){
-	signal(SIGPIPE, SIG_IGN);
+	signal(SIGPIPE, SIG_IGN);///je peux la chnager si j'ai trouver comment j'utilise MSG_NOSIGNAL
 	this->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->socket_fd == -1)
+	{
 		std::cerr << "Error : socket failed :(" << std::endl;
+		return ;
+	}
 	int opt = 1;
 	if (setsockopt(this->socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
+	{
 		std::cerr << "Error : setsockopt failed :(" << std::endl;
+		return ;
+	}
 	if (fcntl(this->socket_fd, F_SETFL, O_NONBLOCK) == -1)
+	{
 		std::cerr << "Error : fcntl failed :(" << std::endl;
+		return ;
+	}
 	struct sockaddr_in addr;
 	std::memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
@@ -170,14 +182,17 @@ void Server::Start(){
 		return ;
 	}
 	if (listen(this->socket_fd, SOMAXCONN) == -1)
+	{
 		std::cerr << "ERROR: listen failed :(" << std::endl;
+		return ;
+	}
 	struct pollfd server;
 	server.fd = this->socket_fd;
 	server.events = POLLIN;
 	server.revents = 0;
 	this->fds.push_back(server);
 	std::string text = "IRC server started. Waiting for connection...";
-	std::cout << GREEN;
+	std::cout << GREEN;	
 	for (size_t i = 0; i < text.size(); i++)
 	{
 		std::cout << text[i] << std::flush;
