@@ -69,6 +69,8 @@ void Server::RemoveClient(int fd)
         }
         ++it;
     }
+	if (cl->Auth_done)
+		std::cout << RED << "==>  Client " << fd << " " << UNDERLINE << nickname << RESET_UNDERLINE << " Disconnected" << RESET_COLOR << std::endl;
     close(fd);
     this->clients.erase(fd);
     for (std::vector<pollfd>::iterator it = this->fds.begin();
@@ -80,7 +82,6 @@ void Server::RemoveClient(int fd)
             break;
         }
     }
-    std::cout << RED << "==>  Client " << fd << " " << UNDERLINE << nickname << RESET_UNDERLINE << " Disconnected" << RESET_COLOR << std::endl;
 }
 
 std::string Server::get_password() const
@@ -144,7 +145,7 @@ void Server::handle_message(int fd)
 	std::memset(buffer, 0, sizeof(buffer));
 	ssize_t bytesRead = recv(fd, buffer, sizeof(buffer) - 1, 0);
 	if (bytesRead <= 0)
-		this->RemoveClient(fd);
+		this->RemoveClient(fd); 
 	else
 	{
 		this->clients[fd].appendToBuffer(std::string(buffer));
