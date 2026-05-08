@@ -1,62 +1,81 @@
-<!-- _This project has been created as part of the 42 curriculum by akahir, ifaleh._
+_This project has been created as part of the 42 curriculum by akahir, ifaleh._
 
-### Description :
-the IRC (Internet Relay Chat) : is real-time communication created in 1988 by Jakko Oikarinen,
-it is one of the first online chat systems. IRC is based on plain text sent over TCP.
-    => A central server manages all connections.
-    => Clients connect to the server via TCP.
-    => communication happens throught channels or private messages.
-    1 - The goal is to create a server capable of handling multiple simultaneous clients using the IRC protocol (RFC 1459).
-    2 - using C++98;
-    3 - Essential Features :
-        --> Authentication: Managing passwords and nicknames.
-        --> Channels: Users must be able to JOIN, PART, and TOPIC channels.
-        --> Privileges: Implementation of "Channel Operators" (ChanOps) who can KICK, INVITE, or change channel modes.
-        --> Communication: Standard messaging between users (PRIVMSG) and notices.
-    
-### Instructions :
-    => Running server : ./ircserv <port> <password>
-    => open un other terminal and run : nc localhost <port> . after runing this command 
-        you can test all commands .
-    => but you should first connect to the server with :
-        --> pass <password>
-        --> nick <nickname>
-        --> user <username> <hostname> <servername> <realname>
-       ==>> client connected.
-    => send messages :
-        --> privmsg <reciever(s)> :messages
-                      /     \
-        <channels members>  <user>
-    => join : is used by client to start listening a specific channel
-        --> join <channel>{,<channel>} [<key>{,<key>}]
-    => kick : to remove a user from a channel :
-        --> kick  <channel> <user> [<comment>]
-    => invite : to invite users to a channel :
-        --> invite <nickname> <channel>
-    => topic : to change or view the topic of a channel :
-        --> topic <channel> [<topic>]
-    => mode : use to change chanmels or users privileges :
-        --> mode <nickname> {[+|-]|i|w|s|o}
-        {
-           i - marks a users as invisible;
-           s - marks a user for receipt of server notices;
-           w - user receives wallops;
-           o - operator flag.
-        }
-    => quit a channel
-        --> quit :reason or without reason
-    
+---
+
+## 📖 Description
+
+**IRC (Internet Relay Chat)** is a real-time communication protocol created in 1988 by Jarkko Oikarinen. It is one of the first online chat systems, based on plain text sent over TCP.
+
+- A central server manages all connections.
+- Clients connect to the server via TCP.
+- Communication happens through channels or private messages.
+
+**Project Goals :**
+1. Build a server capable of handling multiple simultaneous client connections following the IRC       protocol (RFC 1459)
+2. Written in **C++98**.
+3. Essential Features :
+   - **Authentication** : Managing passwords and nicknames.
+   - **Channels** : Users can JOIN, PART, and set TOPIC on channels.
+   - **Privileges** : Channel Operators (ChanOps) can KICK, INVITE, or change channel modes.
+   - **Communication** : Standard messaging between users (PRIVMSG) and notices.
+
+---
+
+## 🚀 Installation & Usage
+
+### Run the server
+```bash
+./ircserv <port> <password>
+```
+
+### Connect with netcat (for testing)
+```bash
+nc localhost <port>
+```
+
+### Authenticate (required before anything else)
+```
+PASS <password>
+NICK <nickname>
+USER <username> <hostname> <servername> <realname>
+```
+==> Client is now connected.
+
+---
+
+## Commands
+
+| Command | Usage | Description |
+|---------|-------|-------------|
+| `PRIVMSG` | `PRIVMSG <target> :<message>` | Send a message to a user or channel |
+| `JOIN` | `JOIN <channel>[,<channel>] [<key>]` | Join a channel |
+| `KICK` | `KICK <channel> <user> [<comment>]` | Remove a user from a channel |
+| `INVITE` | `INVITE <nickname> <channel>` | Invite a user to a channel |
+| `TOPIC` | `TOPIC <channel> [<topic>]` | View or change a channel topic |
+| `MODE` | `MODE <channel> <nickname> {[+\|-]\|i\|t\|l\|k\|o}` | Change user or channel privileges |
+| `QUIT` | `QUIT [:<reason>]` | Disconnect from the server |
+
+### MODE flags
+| Flag | Description |
+|------|-------------|
+| `i` | invite-only channel flag |
+| `l` | set the user limit to channel |
+| `t` | topic settable by channel operator only flag |
+| `k` | set a channel key (password) |
+| `o` | give/take channel operator privileges|
 
 
-### Ressources :
-    tldraw :::
-        https://www.tldraw.com/f/Aqc4EumXMXmYXmSe3xagQ?d=v-670.4002.3019.1663.page
-    RFC(1459) :::
-        https://rfc1459-explorer.netlify.app/
-        https://www.rfc-editor.org/rfc/rfc1459.html
-    colors :::
-        https://strasis.com/documentation/limelight-xe/reference/ecma-48-sgr-codes
+---
 
-### AI usage : 
-    
-    I used AI to help me understand the IRC protocol, as well as the system calls used and how they work
+## Resources
+
+- **Diagram** : [tldraw](https://www.tldraw.com/f/Aqc4EumXMXmYXmSe3xagQ?d=v-670.4002.3019.1663.page)
+- **RFC 1459 Explorer** : [rfc1459-explorer](https://rfc1459-explorer.netlify.app/)
+- **RFC 1459 Official** : [rfc-editor.org](https://www.rfc-editor.org/rfc/rfc1459.html)
+- **ECMA-48 Colors** : [strasis.com](https://strasis.com/documentation/limelight-xe/reference/ecma-48-sgr-codes)
+
+---
+
+## 🤖 AI Usage
+
+I used AI to help me understand the IRC protocol, as well as the system calls used and how they work.
