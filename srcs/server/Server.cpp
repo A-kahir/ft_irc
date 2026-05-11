@@ -18,12 +18,12 @@ void Server::NewClient(){
 	int client_fd = accept(this->socket_fd, (struct sockaddr *)&client_addr, &client_len);
 	if (client_fd == -1)
 	{
-		std::cerr << "Error accept failed :(\n";
+		std::cout << "Error accept failed :(\n";
 		return ;
 	}
 	if (fcntl(client_fd, F_SETFL, O_NONBLOCK) == -1)
 	{
-		std::cerr << "Error fcntl failed :(" << std::endl;
+		std::cout << "Error fcntl failed :(" << std::endl;
 		return ;
 	}
 	struct pollfd cl;
@@ -114,7 +114,7 @@ void Server::process_commands(int fd)
 		this->clients[fd].set_fd(fd);
 		if (ft_is_not_cmd(cmd) == 1)
 		{
-			ft_message(fd, "421", " :Unknown command", cmd);
+			ft_message(fd, "421", " :Unknown command", "");
 			continue;
 		}
 		else
@@ -153,23 +153,24 @@ void Server::handle_message(int fd)
 	}
 }
 
-void Server::Start(){
-	signal(SIGPIPE, SIG_IGN);///je peux la chnager si j'ai trouver comment j'utilise MSG_NOSIGNAL
+void Server::Start()
+{
+	signal(SIGPIPE, SIG_IGN);
 	this->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->socket_fd == -1)
 	{
-		std::cerr << "Error : socket failed :(" << std::endl;
+		std::cout << "Error : socket failed :(" << std::endl;
 		return ;
 	}
 	int opt = 1;
 	if (setsockopt(this->socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
 	{
-		std::cerr << "Error : setsockopt failed :(" << std::endl;
+		std::cout << "Error : setsockopt failed :(" << std::endl;
 		return ;
 	}
 	if (fcntl(this->socket_fd, F_SETFL, O_NONBLOCK) == -1)
 	{
-		std::cerr << "Error : fcntl failed :(" << std::endl;
+		std::cout << "Error : fcntl failed :(" << std::endl;
 		return ;
 	}
 	struct sockaddr_in addr;
@@ -179,12 +180,12 @@ void Server::Start(){
 	addr.sin_port = htons(this->port);
 	if (bind(this->socket_fd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
 	{
-		std::cerr << "ERROR: can't bind :(" << std::endl;
+		std::cout << "ERROR: can't bind :(" << std::endl;
 		return ;
 	}
 	if (listen(this->socket_fd, SOMAXCONN) == -1)
 	{
-		std::cerr << "ERROR: listen failed :(" << std::endl;
+		std::cout << "ERROR: listen failed :(" << std::endl;
 		return ;
 	}
 	struct pollfd server;
@@ -204,7 +205,7 @@ void Server::Start(){
 	{
 		if (poll(&this->fds[0], this->fds.size(), -1) == -1)
 		{
-			std::cerr << "Error : Poll failed:(\n";
+			std::cout << "Error : Poll failed:(\n";
 			break;
 		}
 		for (size_t i = 0; i < fds.size(); i++)
