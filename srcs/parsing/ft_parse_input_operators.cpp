@@ -521,26 +521,17 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
     
     std::stringstream split(input);
     std::string all_targets;
-    split >> all_targets;
-    
-    std::string word;
-    int flag_msg = 0;
-    while (split >> word)
-    {
-        if (word[0] == ':')
-        {
-            flag_msg = 1;
-            word.erase(0, 1);
-            std::string rest;
-            std::getline(split, rest);
-            word += rest;
-            break;
-        }
-    }
-    if (!flag_msg)
-	{
-		return (ft_message(fd, "412", " :No text to send", "", 0), 1);
-	}
+	split >> all_targets;
+	std::string message;
+	std::getline(split, message);
+	while (!message.empty() && message[0] == ' ')
+		message.erase(0, 1);
+	if (!message.empty() && message[0] == ':')
+		message.erase(0, 1);
+	if (message.empty())
+		return (ft_message(fd, "412", " PRIVMSG :No text to send", "", 0), 1);
+
+	printf("all targs ==>[%s] => message ==>[%s]\n", all_targets.c_str(), message.c_str());
     std::vector<std::string> targets = ft_split_tok(all_targets, ',');
     for (size_t i = 0; i < targets.size(); i++)
     {
@@ -577,8 +568,8 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
             {
                 if (target_chan->users[j]->get_fd() != fd)
                 {
-                    std::string msg = ft_build_message(fd) + " PRIVMSG " + current_target + " :" + word + "";
-                    ft_message(target_chan->users[j]->get_fd(), "", msg, "", 1);
+                    std::string msg = ft_build_message(fd) + " PRIVMSG " + current_target + " :" + message + "\r\n";
+					send(target_chan->users[j]->get_fd(), msg.c_str(), msg.size(), 0);
                 }
             }
         }
@@ -599,7 +590,7 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
                 continue;
             }
 			this->clients[fd].incr_prv();
-            std::string msg = ft_build_message(fd) + " PRIVMSG " + target_user->get_nick() + " :" + word + "\r\n";
+            std::string msg = ft_build_message(fd) + " PRIVMSG " + target_user->get_nick() + " :" + message + "\r\n";
             send(target_user->get_fd(), msg.c_str(), msg.size(), 0);
         }
     }
