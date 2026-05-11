@@ -64,6 +64,22 @@ USER <username> <hostname> <servername> <realname>
 | `k` | set a channel key (password) |
 | `o` | give/take channel operator privileges|
 
+---
+
+### Bonus Part
+| Flag | Description |
+|------|-------------|
+| `KA3KOU3` | Inspired by a school bot idea. This bot can count user login time and private messages sent between users.  |
+| `file transfer` | DCC SEND is a file transfer method where one IRC client sends a file directly to another client |
+
+### How To Test Bonus Part
+
+`Ka3kou3` : you should add Ka3kou3 as a client. First step: auth commands: `PASS <password>` and `NICK bot`. This lets the code know that you want to create KA3KOU3.<br>
+- commands of Ka3kou3 :<br>
+`ka3kou3 /logtime <nick>` to see the logtime of a client.<br>
+`ka3kou3 /privmsg <nick>` to see the count of private messages sent to a user.
+
+
 
 ---
 
