@@ -6,14 +6,14 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
     if ((cmd == "JOIN" || cmd == "INVITE" || cmd == "KICK" || cmd == "MODE" || cmd == "TOPIC" || cmd == "PRIVMSG")
         && this->clients[fd].Auth_is_registered() == 0)
     {
-        ft_message(fd, "451", " :You have not registered", "", 0);
+        ft_message(fd, "451", ":You have not registered", "", 0);
         return;
     }
     if (cmd == "PASS")
     {
         if (cl.Auth_done)
         {
-            ft_message(fd, "462", " :You may not reregister", "", 0);
+            ft_message(fd, "462", ":You may not reregister", "", 0);
             return;
         }
         else
@@ -28,7 +28,7 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
     {
         if (cl.Auth_done)
         {
-            ft_message(fd, "462", " :You may not reregister", "", 0);
+            ft_message(fd, "462", ":You may not reregister", "", 0);
                 return;
         }
         if (input.empty() || input[0] == ' ')
@@ -38,7 +38,7 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
         }
         if (!cl.Auth_pass)
         {
-            ft_message(fd, "451", " :You have not registered", "", 0);
+            ft_message(fd, "451", ":You have not registered", "", 0);
                 return;
         }
         else
@@ -86,12 +86,12 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
     {
         if (!cl.Auth_pass || !cl.Auth_nick)
         {
-            ft_message(fd, "451", " :You have not registered", "", 0);
+            ft_message(fd, "451", ":You have not registered", "", 0);
             return;
         }
         if (cl.Auth_done)
         {
-            ft_message(fd, "462", " :You may not reregister", "", 0);
+            ft_message(fd, "462", ":You may not reregister", "", 0);
             return;
         }
         else

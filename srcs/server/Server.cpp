@@ -112,10 +112,9 @@ void Server::process_commands(int fd)
 		for (size_t i = 0; i < cmd.size(); i++)
 			cmd[i] = toupper(cmd[i]);
 		this->clients[fd].set_fd(fd);
-		printf("fd ==> [%d] | cmd ==> [%s]  | input ==> [%s]\n", fd, cmd.c_str(), input.c_str());
 		if (ft_is_not_cmd(cmd) == 1)
 		{
-			ft_message(fd, "421", " :Unknown command", "", 0);
+			ft_message(fd, "421", " :Unknown command", cmd, 0);
 			continue;
 		}
 		else
