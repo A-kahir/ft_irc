@@ -61,7 +61,7 @@ void Server::ft_operators(std::string cmd, std::string input, client &cl, int fd
 
 		if (ft_is_operator(channel, fd) == 0)
 		{
-			ft_message(fd, "482", " :You're not channel operator", "#" + chan);
+			ft_message(fd, "482", " :You're not channel operator", "#" + chan, 0);
 			return ;
 		}
 
@@ -101,7 +101,7 @@ void Server::ft_operators(std::string cmd, std::string input, client &cl, int fd
 	{
 		if (!have_boot)
 		{
-			ft_message(fd, "", "You don't Add Ka3kou3 to this Server :(", "");
+			ft_message(fd, "", "You don't Add Ka3kou3 to this Server :(", "", 0);
 			return ;
 		}
 		std::stringstream split(input);
@@ -110,12 +110,12 @@ void Server::ft_operators(std::string cmd, std::string input, client &cl, int fd
 		split >> mode >> user;
 		if (mode.empty() || user.empty())
 		{
-			ft_message(fd, "461", " :Not enough parameters", "");
+			ft_message(fd, "461", " :Not enough parameters", cmd, 0);
 			return;
 		}
 		if (mode != "/logtime" && mode != "/privmsg")
 		{
-			ft_message(fd, "", " Ka3kou3 accept only : /logtime Or /privmsg", "");
+			ft_message(fd, "", " Ka3kou3 accept only : /logtime Or /privmsg", "", 0);
 			return ;
 		}
 		client *target_user = NULL;
@@ -129,7 +129,7 @@ void Server::ft_operators(std::string cmd, std::string input, client &cl, int fd
 		}
 		if (!target_user)
 		{
-			ft_message(fd, "401", " :No such nick", user);
+			ft_message(fd, "401", " :No such nick", user, 0);
 			return ;
 		}
 		if (mode == "/logtime")
@@ -138,7 +138,7 @@ void Server::ft_operators(std::string cmd, std::string input, client &cl, int fd
 		{
 			    std::stringstream otp;
 					otp << "Ka3kou3 : " << user << " sent " <<target_user->get_prvcount() << " PRIVMSG";
-			ft_message(fd, "", otp.str() , "");
+			ft_message(fd, "", otp.str() , "", 0);
 		}
 	}
 }

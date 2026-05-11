@@ -27,7 +27,7 @@ int ft_is_valid_channel(std::string part)
 int Server::ft_parse_input_join(std::string input, int fd)
 {
     if (input.empty())
-        return (ft_message(fd, "461", " :Not enough parameters", ""), 1);
+        return (ft_message(fd, "461", "JOIN :Not enough parameters", "", 0), 1);
     client &cl = this->clients[fd];
 
     std::stringstream split(input);
@@ -42,22 +42,22 @@ int Server::ft_parse_input_join(std::string input, int fd)
 	{
 		if (ft_check_max_chans_joined(fd) > 10)
 		{
-			ft_message(fd, "405", " :You have joined too many channels", this->clients[fd].get_nick() + " " + chans[i]);
+			ft_message(fd, "405", " :You have joined too many channels", this->clients[fd].get_nick() + " " + chans[i], 0);
 			continue;
 		}
 		if (chans[i][0] != '#')
 		{
-			ft_message(fd, "403", " :No such channel", cl.get_nick() + " " + chans[i]);
+			ft_message(fd, "403", " :No such channel", cl.get_nick() + " " + chans[i], 0);
 			continue;
 		}
 		if (!ft_is_valid_channel(chans[i]))
 		{
-			ft_message(fd, "403", " :No such channel", cl.get_nick() + " " + chans[i]);
+			ft_message(fd, "403", " :No such channel", cl.get_nick() + " " + chans[i], 0);
 			continue;
 		}
 		if (chans[i].size() > 200)
 		{
-			ft_message(fd, "403", " :No such channel", cl.get_nick() + " " + chans[i]);
+			ft_message(fd, "403", " :No such channel", cl.get_nick() + " " + chans[i], 0);
 			continue;
 		}
 		if (chans[i][0] == '#')
@@ -70,7 +70,7 @@ int Server::ft_parse_input_join(std::string input, int fd)
 			{
 				if (chan->invit_only && cl.get_flag_invitation() == 0)
 				{
-					ft_message(fd, "473", " :Cannot join channel (+i)", "#" + chan->name);
+					ft_message(fd, "473", " :Cannot join channel (+i)", "#" + chan->name, 0);
 					continue;
 				}
 				std::string curr_key;
@@ -82,13 +82,13 @@ int Server::ft_parse_input_join(std::string input, int fd)
 				{
 					if (curr_key.empty() || curr_key != chan->pswrd)
 					{
-						ft_message(fd, "475", " :Cannot join channel (+k)", "#" + chan->name);
+						ft_message(fd, "475", " :Cannot join channel (+k)", "#" + chan->name, 0);
 						continue;
 					}
 				}
 				if (chan->user_limit != -1 && chan->users.size() >= (size_t)chan->user_limit)
 				{
-					ft_message(fd, "471", " :Cannot join channel (+l)", "#" + chan->name);
+					ft_message(fd, "471", " :Cannot join channel (+l)", "#" + chan->name, 0);
 					continue;
 				}
 			}
@@ -136,7 +136,7 @@ int Server::ft_parse_input_join(std::string input, int fd)
 				join_msg += chan->users[i]->get_nick();
 			join_msg += " ";
 		}
-    	ft_message(fd, "353 ", join_msg, "");
+    	ft_message(fd, "353 ", join_msg, "", 1);
 
     	std::string end_msg = ":" SERVER_NAME " 366 " + cl.get_nick() + " #" + chan->name + " :End of /NAMES list\r\n";
     	send(fd, end_msg.c_str(), end_msg.size(), 0);
@@ -147,7 +147,7 @@ int Server::ft_parse_input_join(std::string input, int fd)
 int Server::ft_parse_input_kick(std::string input, int fd) 
 {
     if (input.empty())
-        return (ft_message(fd, "461", " KICK :Not enough parameters", ""), 1);
+        return (ft_message(fd, "461", " KICK :Not enough parameters", "", 0), 1);
 
     std::stringstream ss(input);
     std::string chan_name;
@@ -156,7 +156,7 @@ int Server::ft_parse_input_kick(std::string input, int fd)
     ss >> chan_name >> users;
     std::getline(ss, reason);
     if (chan_name.empty() || users.empty())
-        return (ft_message(fd, "461", " KICK :Not enough parameters", ""), 1);
+        return (ft_message(fd, "461", " KICK :Not enough parameters", "", 0), 1);
     int found = 0;
 	if (chan_name[0] == '#')
     	chan_name.erase(0, 1);
@@ -170,7 +170,7 @@ int Server::ft_parse_input_kick(std::string input, int fd)
     }
     if (!found)
     {
-        ft_message(fd, "403", " :No such channel", chan_name);
+        ft_message(fd, "403", " :No such channel", chan_name, 0);
         return (1);
     }
     else
@@ -186,7 +186,7 @@ int Server::ft_parse_input_kick(std::string input, int fd)
             }
         }
         if (!flag)
-            return (ft_message(fd, ":server 442", ":You're not on that channel", input), 1);
+            return (ft_message(fd, "442", ":You're not on that channel", input, 0), 1);
     }
     size_t start = 0;
     while (start < users.size())
@@ -200,7 +200,7 @@ int Server::ft_parse_input_kick(std::string input, int fd)
 
         std::map<int, client>::iterator it_user = this->clients.find(fd);
         if (it_user == this->clients.end())
-            ft_message(fd, "401", " :No such nick", nick);
+            ft_message(fd, "401", " :No such nick", nick, 0);
         if (comma == std::string::npos)
             break;
         start = comma + 1;
@@ -208,7 +208,7 @@ int Server::ft_parse_input_kick(std::string input, int fd)
 	channels *chans = ft_get_channel(chan_name);
 	if (ft_is_operator(chans, fd) == 0)
 	{
-		return (ft_message(fd, "482", " :You're not channel operator", ""), 1);
+		return (ft_message(fd, "482", " :You're not channel operator", "", 0), 1);
 	}
 	ft_get_user_by_nick(users)->set_flag_invitation(0);
 	for (size_t i = 0; i < chans->users.size(); i++)
@@ -257,14 +257,14 @@ int Server::ft_parse_input_kick(std::string input, int fd)
 int Server::ft_parse_input_invit(std::string input, int fd)
 {
     if (input.empty())
-        return (ft_message(fd, "461", " INVITE :Not enough parameters", ""), 1);
+        return (ft_message(fd, "461", " INVITE :Not enough parameters", "", 0), 1);
 
     std::stringstream split(input);
     std::string user;
     std::string chan;
     split >> user >> chan;
     if (user.empty() || chan.empty())
-        return (ft_message(fd, "461", " INVITE :Not enough parameters", ""), 1);
+        return (ft_message(fd, "461", " INVITE :Not enough parameters", "", 0), 1);
     if (!chan.empty() && chan[0] == '#')
         chan.erase(0, 1);
     client *target_user = NULL;
@@ -279,15 +279,15 @@ int Server::ft_parse_input_invit(std::string input, int fd)
         }
     }
     if (!target_user)
-        return (ft_message(fd, "401", " :No such nick", user), 1);
+        return (ft_message(fd, "401", " :No such nick", user, 0), 1);
 
     channels *target_chan = ft_get_channel(chan);
     if (!target_chan)
 	{
-		return (ft_message(fd, "403", " :No such channel", "#" + chan), 1);
+		return (ft_message(fd, "403", " :No such channel", "#" + chan, 0), 1);
 	}
 	if (ft_is_operator(target_chan, fd) == 0)
-		return (ft_message(fd, "482", " :You're not channel operator", "#" + chan), 1);
+		return (ft_message(fd, "482", " :You're not channel operator", "#" + chan, 0), 1);
 
     int is_in_channel = 0;
     for (size_t i = 0; i < target_chan->users.size(); i++)
@@ -299,12 +299,12 @@ int Server::ft_parse_input_invit(std::string input, int fd)
         }
     }
     if (!is_in_channel)
-        return (ft_message(fd ,"442", " :You're not on that channel", "#" + chan), 1);
+        return (ft_message(fd ,"442", " :You're not on that channel", "#" + chan, 0), 1);
     for (size_t i = 0; i < target_chan->users.size(); i++)
     {
         if (target_chan->users[i] == target_user)
         {
-            return (ft_message(fd, "443", " :is already on channel", user + " #" + chan), 1);
+            return (ft_message(fd, "443", " :is already on channel", user + " #" + chan, 0), 1);
         }
     }
     if (is_in_channel)
@@ -325,7 +325,7 @@ int Server::ft_parse_input_invit(std::string input, int fd)
 int Server::ft_parse_input_topic(std::string input, int fd)
 {
 	if (input.empty())
-        return (ft_message(fd, "461", " TOPIC :Not enough parameters", ""), 1);
+        return (ft_message(fd, "461", " TOPIC :Not enough parameters", "", 0), 1);
 
 	int flag_set = 0;
 	std::vector<std::string> result;
@@ -346,7 +346,7 @@ int Server::ft_parse_input_topic(std::string input, int fd)
 		result.push_back(word);
 	}
 	if (result.size() < 1)
-		return (ft_message(fd, "461", " TOPIC :Not enough parameters", ""), 1);
+		return (ft_message(fd, "461", " TOPIC :Not enough parameters", "", 0), 1);
 
 	std::string chan = result[0];
 	std::vector<std::string> all_chans = ft_split_tok(chan, ',');
@@ -360,7 +360,7 @@ int Server::ft_parse_input_topic(std::string input, int fd)
 		if (all_chans[i][0] == '#')
 			all_chans[i].erase(0, 1);
 		else if (all_chans[i][0] != '#')
-			ft_message(fd, "403", " :No such channel", all_chans[i]);
+			ft_message(fd, "403", " :No such channel", all_chans[i], 0);
 
 		for (std::vector<channels>::iterator it = this->chans.begin(); it != this->chans.end(); it++)
 		{
@@ -372,13 +372,13 @@ int Server::ft_parse_input_topic(std::string input, int fd)
 		}
 		if (!channel)
 		{
-			ft_message(fd, "403", " :No such channel", "#" + all_chans[i]);
+			ft_message(fd, "403", " :No such channel", "#" + all_chans[i], 0);
 			continue;
 		}
 		
 		if (!ft_is_user_in_channel(channel, fd))
 		{
-			ft_message(fd, "442", " :You're not on that channel", "#" + all_chans[i]);
+			ft_message(fd, "442", " :You're not on that channel", "#" + all_chans[i], 0);
 			continue;
 		}
 
@@ -389,9 +389,9 @@ int Server::ft_parse_input_topic(std::string input, int fd)
 				if (it->name == all_chans[i])
 				{
 					if (it->topic == "No topic is set")
-						ft_message(fd, "331", " :No topic is set", "#" + all_chans[i]);
+						ft_message(fd, "331", " :No topic is set", "#" + all_chans[i], 0);
 					else
-						ft_message(fd, "332", " :" + it->topic, "#" + all_chans[i]);
+						ft_message(fd, "332", " :" + it->topic, "#" + all_chans[i], 0);
 					break;
 				}
 			}
@@ -400,7 +400,7 @@ int Server::ft_parse_input_topic(std::string input, int fd)
 	if (!flag_set)
 		return (0);
 	if (channel->topic_rest && ft_is_operator(channel, fd) == 0)
-		return (ft_message(fd, "482", " :You're not channel operator", ""), 1);
+		return (ft_message(fd, "482", " :You're not channel operator", "", 0), 1);
 	else if (flag_set)
 	{
 		channel->topic = topic_msg;
@@ -418,7 +418,7 @@ int Server::ft_parse_input_topic(std::string input, int fd)
 int Server::ft_parse_input_mode(std::string input, int fd)
 {
 	if (input.empty())
-		return (ft_message(fd, "461", " MODE :Not enough parameters", ""), 1);
+		return (ft_message(fd, "461", " MODE :Not enough parameters", "", 0), 1);
 
 	std::stringstream split(input);
 	std::string chan;
@@ -426,11 +426,11 @@ int Server::ft_parse_input_mode(std::string input, int fd)
 	std::string arg;
 	split >> chan >> mode >> arg;
 	if (chan.empty() || mode.empty())
-		return (ft_message(fd, "461", " MODE :Not enough parameters", ""), 1);
+		return (ft_message(fd, "461", " MODE :Not enough parameters", "", 0), 1);
 	if (chan[0] == '#')
 		chan.erase(0, 1);
 	else if (chan[0] != '#')
-		return (ft_message(fd, "403", " :No such channel", "#" + chan), 1);
+		return (ft_message(fd, "403", " :No such channel", "#" + chan, 0), 1);
 
 	channels *channel = NULL;
 	for (std::vector<channels>::iterator it = this->chans.begin(); it != this->chans.end(); ++it)
@@ -442,25 +442,25 @@ int Server::ft_parse_input_mode(std::string input, int fd)
 		}
 	}
 	if (!channel)
-		return (ft_message(fd, "403", " :No such channel", "#" + chan), 1);
+		return (ft_message(fd, "403", " :No such channel", "#" + chan, 0), 1);
 
 	if (!ft_is_user_in_channel(channel, fd))
-		return (ft_message(fd, "442", " :You're not on that channel", "#" + chan), 1);
+		return (ft_message(fd, "442", " :You're not on that channel", "#" + chan, 0), 1);
 
 	if (mode != "+i" && mode != "-i" &&
 		mode != "+t" && mode != "-t" &&
 		mode != "+k" && mode != "-k" &&
 		mode != "+o" && mode != "-o" &&
 		mode != "+l" && mode != "-l")
-		return (ft_message(fd, "472", " :is unknown mode char to me", mode), 1);
+		return (ft_message(fd, "472", " :is unknown mode char to me", mode, 0), 1);
 
 	if (ft_is_operator(channel, fd) == 0)
 	{
-		ft_message(fd, "482", " :You're not channel operator", "#" + chan);
+		ft_message(fd, "482", " :You're not channel operator", "#" + chan, 0);
 		return (1);
 	}
 	if ((mode == "+k" || mode == "+o" || mode == "+l") && arg.empty())
-    	return (ft_message(fd, "461", " MODE :Not enough parameters", ""), 1);
+    	return (ft_message(fd, "461", " MODE :Not enough parameters", "", 0), 1);
 	else if (mode == "+o" || mode == "-o")
 	{
 		client *target = NULL;
@@ -473,10 +473,10 @@ int Server::ft_parse_input_mode(std::string input, int fd)
 			}
 		}
 		if (!target)
-			return (ft_message(fd, "401", " :No such nick", arg), 1);
+			return (ft_message(fd, "401", " :No such nick", arg, 0), 1);
 
 		if (!ft_is_user_in_channel(channel, target->get_fd()))
-			return (ft_message(fd, "441", " :They aren't on that channel", arg + " #" + chan), 1);
+			return (ft_message(fd, "441", " :They aren't on that channel", arg + " #" + chan, 0), 1);
 
 		if (mode == "+o")
 		{
@@ -514,11 +514,10 @@ int Server::ft_parse_input_mode(std::string input, int fd)
 	return (0);
 }
 
-
 int Server::ft_parse_input_privmsg(std::string input, int fd)
 {
     if (input.empty())
-        return (ft_message(fd, "461", " PRIVMSG :Not enough parameters", ""), 1);
+        return (ft_message(fd, "461", " PRIVMSG :Not enough parameters", "", 0), 1);
     
     std::stringstream split(input);
     std::string all_targets;
@@ -540,20 +539,8 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
     }
     if (!flag_msg)
 	{
-		return (ft_message(fd, "412", " :No text to send", ""), 1);
+		return (ft_message(fd, "412", " :No text to send", "", 0), 1);
 	}
-	if (word.find("DCC SEND") != std::string::npos)
-    {
-		if (!word.empty() && word[0] == '\001')
-		{
-			word.erase(0, 1);
-		}
-    	if (!word.empty() && word[word.size() - 1] == '\001')
-		{
-			word.erase(word.size() - 1, 1);
-		}
-		word = '\001' + word + '\001';
-    }
     std::vector<std::string> targets = ft_split_tok(all_targets, ',');
     for (size_t i = 0; i < targets.size(); i++)
     {
@@ -568,7 +555,7 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
             channels *target_chan = ft_get_channel(chan_name);
             if (!target_chan)
             {
-                ft_message(fd, "403", " :No such channel", current_target);
+                ft_message(fd, "403", " :No such channel", current_target, 0);
                 continue;
             }
             int is_in_channel = 0;
@@ -582,7 +569,7 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
             }
             if (!is_in_channel)
             {
-                ft_message(fd, "442", " :You're not on that channel", current_target);
+                ft_message(fd, "442", " :You're not on that channel", current_target, 0);
                 	continue;
             }
 
@@ -591,7 +578,7 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
                 if (target_chan->users[j]->get_fd() != fd)
                 {
                     std::string msg = ft_build_message(fd) + " PRIVMSG " + current_target + " :" + word + "";
-                    ft_message(target_chan->users[j]->get_fd(), "", msg, "");
+                    ft_message(target_chan->users[j]->get_fd(), "", msg, "", 1);
                 }
             }
         }
@@ -608,7 +595,7 @@ int Server::ft_parse_input_privmsg(std::string input, int fd)
             }
             if (!target_user)
             {
-                ft_message(fd, "401", " :No such nick", current_target);
+                ft_message(fd, "401", " :No such nick", current_target, 0);
                 continue;
             }
 			this->clients[fd].incr_prv();

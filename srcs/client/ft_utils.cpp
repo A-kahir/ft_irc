@@ -2,15 +2,21 @@
 #include "../../includes/Client.hpp"
 #include "../../includes/Channels.hpp"
 
-void ft_message(int fd, std::string code_rfc, std::string message, std::string data)
+void ft_message(int fd, std::string code_rfc, std::string message, std::string data, int flag)
 {
-    std::string server_name =  SERVER_NAME;
-    std::string print = ":" +  server_name + " " + code_rfc;
+    std::string print;
+    if (flag == 1)
+    {
+       std::string server_name =  SERVER_NAME;
+       print = ":" +  server_name + " ";
+    }
+    print += code_rfc;
     if (!data.empty())
         print += " " + data;
-    print += message;
+    if (!message.empty())
+        print += message;
     print += "\r\n";
-    send(fd, print.c_str(), print.size(), 0);
+    send(fd, print.c_str(), print.size(),0);
 }
 
 void Server::ft_count_logtime_bot(int fd, std::string user, int target_fd)
@@ -27,7 +33,7 @@ void Server::ft_count_logtime_bot(int fd, std::string user, int target_fd)
     otp << "Ka3kou3 : Logtime of " << user
        << " is : " << min << "min " << sec << "sec";
 
-    ft_message(fd, "", otp.str(), "");
+    ft_message(fd, "", otp.str(), "", 0);
 }
 
 std::vector<std::string> ft_split_tok(const std::string chanls, char delimiter)

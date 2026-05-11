@@ -6,14 +6,14 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
     if ((cmd == "JOIN" || cmd == "INVITE" || cmd == "KICK" || cmd == "MODE" || cmd == "TOPIC" || cmd == "PRIVMSG")
         && this->clients[fd].Auth_is_registered() == 0)
     {
-        ft_message(fd, "451", " :You have not registered", "");
+        ft_message(fd, "451", " :You have not registered", "", 0);
         return;
     }
     if (cmd == "PASS")
     {
         if (cl.Auth_done)
         {
-            ft_message(fd, "462", " :You may not reregister", "");
+            ft_message(fd, "462", " :You may not reregister", "", 0);
             return;
         }
         else
@@ -28,17 +28,17 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
     {
         if (cl.Auth_done)
         {
-            ft_message(fd, "462", " :You may not reregister", "");
+            ft_message(fd, "462", " :You may not reregister", "", 0);
                 return;
         }
         if (input.empty() || input[0] == ' ')
         {
-            ft_message(fd, "461", " NICK :Not enough parameters", "");
+            ft_message(fd, "461", " NICK :Not enough parameters", "", 0);
                 return;
         }
         if (!cl.Auth_pass)
         {
-            ft_message(fd, "451", " :You have not registered", "");
+            ft_message(fd, "451", " :You have not registered", "", 0);
                 return;
         }
         else
@@ -47,7 +47,7 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
             {
                 if (it->second.get_nick() == input)
                 {
-                    ft_message(fd, "433", " :Nickname is already in use", "");
+                    ft_message(fd, "433", " :Nickname is already in use", "", 0);
                     return;
                 }
             }
@@ -62,7 +62,7 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
                 {
                     if (this->have_boot == 1)
                     {
-                        ft_message(fd, "", "You Can't Add More than one Ka3kou3 ;)", "");
+                        ft_message(fd, "", "You Can't Add More than one Ka3kou3 ;)", "", 0);
                         return;
                     }
                     this->have_boot = 1;
@@ -74,7 +74,7 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
                     cl.set_servername(SERVER_NAME);
                     cl.set_realname("ka3kou3_Bot");
                     std::string msg = "You Add Ka3kou3 to your Server\r\nYou can use :\r\n   -> Ka3kou3 /logtime <username> : to check logtime\r\n   -> Ka3kou3 /privmsg <username> : to check number of message you send";
-                    ft_message(fd, "", msg, "");
+                    ft_message(fd, "", msg, "", 0);
                     return;
                 }
                 cl.set_nick(input);
@@ -86,12 +86,12 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
     {
         if (!cl.Auth_pass || !cl.Auth_nick)
         {
-            ft_message(fd, "451", " :You have not registered", "");
+            ft_message(fd, "451", " :You have not registered", "", 0);
             return;
         }
         if (cl.Auth_done)
         {
-            ft_message(fd, "462", " :You may not reregister", "");
+            ft_message(fd, "462", " :You may not reregister", "", 0);
             return;
         }
         else
@@ -106,7 +106,7 @@ void Server::ft_first_cmds(std::string cmd, std::string input, client &cl, int f
                                 + ":" SERVER_NAME " 003 " + this->clients[fd].get_nick() + " :This server was created Today\r\n"
                                 + ":" SERVER_NAME" 004 " + this->clients[fd].get_nick() + " server 1.0";
             
-            	ft_message(fd, "", msg1, "");
+            	ft_message(fd, "", msg1, "", 1);
             }
         }
     }
