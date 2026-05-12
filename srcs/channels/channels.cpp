@@ -1,5 +1,6 @@
 #include "../../includes/Channels.hpp"
 #include "../../includes/Client.hpp"
+
 channels::channels() : topic("No topic is set")
 {
     this->invit_only = 0;
