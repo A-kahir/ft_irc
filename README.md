@@ -16,12 +16,12 @@ _This project has been created as part of the 42 curriculum by akahir, ifaleh._
 3. Essential Features :
    - **Authentication** : Managing passwords and nicknames.
    - **Channels** : Users can JOIN, PART, and set TOPIC on channels.
-   - **Privileges** : Channel Operators (ChanOps) can KICK, INVITE, or change channel modes.
+   - **Privileges** : Channel Operators can KICK, INVITE, or change channel modes.
    - **Communication** : Standard messaging between users (PRIVMSG) and notices.
 
 ---
 
-## 🚀 Installation & Usage
+## Usage
 
 ### Run the server
 ```bash
@@ -70,7 +70,7 @@ USER <username> <hostname> <servername> <realname>
 | Flag | Description |
 |------|-------------|
 | `KA3KOU3` | Inspired by a school bot idea. This bot can count user login time and private messages sent between users.  |
-| `file transfer` | DCC SEND is a file transfer method where one IRC client sends a file directly to another client |
+| `file transfer` | the IRC protocole only handles text for file transfer we need DCC (Direct Client-to-client) is an extention invented by IRC clients to transfert file directly between two clients|
 
 ### How To Test Bonus Part
 
@@ -92,6 +92,10 @@ USER <username> <hostname> <servername> <realname>
 
 ---
 
-## 🤖 AI Usage
+## AI Usage
 
-I used AI to help me understand the IRC protocol, as well as the system calls used and how they work.
+AI is used during this project to the following tasks:
+
+**IRC concept :** Explaining the global idea about the project and a roadmap to build it.
+
+**sys-calls clarification :** explaining their behavior and their usage.
