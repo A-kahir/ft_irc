@@ -2,7 +2,7 @@ _This project has been created as part of the 42 curriculum by akahir, ifaleh._
 
 ---
 
-## 📖 Description
+## Description
 
 **IRC (Internet Relay Chat)** is a real-time communication protocol created in 1988 by Jarkko Oikarinen. It is one of the first online chat systems, based on plain text sent over TCP.
 
@@ -21,27 +21,38 @@ _This project has been created as part of the 42 curriculum by akahir, ifaleh._
 
 ---
 
-## Usage
+## Instructions
+
+### Compilation
+The project includes a `Makefile` to compile the source code. To build the executable, run:
+```make all```
+The resulting executable will be named `ircserv`.
+
+
+### Execution
+Run the server by specifying a port and a connection password : 
+```./ircserv <port> <password>```
+
+**Requirements:**
+* **Port:** Must be a numeric value within the range **1024 - 65535**.
+
 
 ### Run the server
-```bash
-./ircserv <port> <password>
-```
+```./ircserv <port> <password>```
 
 ### Connect with netcat (for testing)
-```bash
-nc localhost <port>
-```
-
-### Authenticate (required before anything else)
-```
-PASS <password>
-NICK <nickname>
-USER <username> <hostname> <servername> <realname>
-```
-==> Client is now connected.
+```nc localhost <port>```
 
 ---
+## Auth Commands
+
+| Command | Usage | Description |
+|---------|-------|-------------|
+| `PASS` | `<password>` | The PASS command is used to set a connection password |
+| `NICK` | `<nickname>` | NICK message is used to give user a nickname or change the previous one |
+| `USER` | `<username> <hostname> <servername> <realname>` | The USER message is used at the beginning of connection to specify the username, hostname, servername and realname of s new user |
+
+==> Client is now connected.
 
 ## Commands
 
@@ -52,7 +63,7 @@ USER <username> <hostname> <servername> <realname>
 | `KICK` | `KICK <channel> <user> [<comment>]` | Remove a user from a channel |
 | `INVITE` | `INVITE <nickname> <channel>` | Invite a user to a channel |
 | `TOPIC` | `TOPIC <channel> [<topic>]` | View or change a channel topic |
-| `MODE` | `MODE <channel> <nickname> {[+\|-]\|i\|t\|l\|k\|o}` | Change user or channel privileges |
+| `MODE` | `MODE <channel> {[+\|-]\|i\|t\|l\|k\|o} <nickname if needed>` | Change user or channel privileges |
 | `QUIT` | `QUIT [:<reason>]` | Disconnect from the server |
 
 ### MODE flags
@@ -79,8 +90,6 @@ USER <username> <hostname> <servername> <realname>
 `ka3kou3 /logtime <nick>` to see the logtime of a client.<br>
 `ka3kou3 /privmsg <nick>` to see the count of private messages sent to a user.
 
-
-
 ---
 
 ## Resources
@@ -96,6 +105,6 @@ USER <username> <hostname> <servername> <realname>
 
 AI is used during this project to the following tasks:
 
-**IRC concept :** Explaining the global idea about the project and a roadmap to build it.
+- **IRC concept :** Explaining the global idea about the project and a roadmap to build it.
 
-**sys-calls clarification :** explaining their behavior and their usage.
+- **sys-calls clarification :** explaining their behavior and their usage.
